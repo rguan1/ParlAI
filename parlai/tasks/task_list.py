@@ -10,6 +10,12 @@ tags associated with them.
 
 task_list = [
     {
+        "id": "TutorialConvos",
+        "display_name" : "TutorialConvos",
+        "task": "tutorial_new_task",
+        "tags": ["tutorial"],
+    },
+    {
         "id": "AmazonQA",
         "display_name": "AmazonQA",
         "task": "amazon_qa",

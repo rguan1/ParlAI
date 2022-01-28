@@ -233,7 +233,7 @@ class BPEHelper(ABC):
         # no special tokens found, we can fall back
         text = self.helper_decode(tokens, token_ids, delimiter)
         if self.add_prefix_space:
-            assert text.startswith(' ')
+            # assert text.startswith(' ')
             text = text.lstrip(' ')
         return text
 
