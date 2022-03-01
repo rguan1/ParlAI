@@ -96,7 +96,7 @@ def setup_args(parser=None):
     return parser
 
 
-def _run_self_chat_episode(opt, world, world_logger):
+def _run_self_chat_episode(opt, world, world_logger, add_chat):
     bsz = opt.get('batchsize', 1)
     num_turns = opt['selfchat_max_turns']
     assert bsz == 1, "Batch size cannot be different than 1 for self-chat"
@@ -105,17 +105,14 @@ def _run_self_chat_episode(opt, world, world_logger):
     agent1 = world.agents[0]
     agent2 = world.agents[1]
 
-    # add history
-    add_history(agent1, ["Hello. I am a goat", "Great. I am a mongoose", "I like eating grass"], True)
-    add_history(agent2, ["Hello. I am a goat", "Great. I am a mongoose", "I like eating grass"], False)
-    
-
-
-    for _ in range(num_parleys):
-
-        print_history(agent1)
+    for i in range(num_parleys):
+        
+        if i == 1:
+            #hardcoded bc world.parley() deletes history if placed outside of history
+            add_history(agent1, add_chat, True)
+            add_history(agent2, add_chat, False)
+        
         world.parley()
-
         world_logger.log(world)
 
         if opt['display_examples']:
@@ -128,7 +125,6 @@ def _run_self_chat_episode(opt, world, world_logger):
 
     print_history(agent1)
     world.reset()
-    print_history(agent1)
     world_logger.reset_world()  # flush this episode
 
 
@@ -136,6 +132,16 @@ def self_chat(opt):
     random.seed(opt['seed'])
     partner = opt['partner_model_file']
     partner_opt_file = opt.get('partner_opt_file')
+    history_file = opt.get('add_history_from_file')
+
+    #load history
+    if history_file:
+        print(f'Loading history from {history_file}')
+        with PathManager.open(history_file) as f:
+            chat_history = json.load(f)
+    else:
+        chat_history = None
+
 
     # Create agents
     agent1 = create_agent(opt, requireModelExists=True)
@@ -174,7 +180,12 @@ def self_chat(opt):
 
     # Run some self chats.
     for i in range(opt['num_self_chats']):
-        _run_self_chat_episode(opt, world, logger)
+        
+        if chat_history:
+            add_chat = chat_history[i]
+        else:
+            add_chat = None
+        _run_self_chat_episode(opt, world, logger, add_chat)
         report = world.report()
         text, report = log_time.log(i + 1, opt['num_self_chats'], report)
         logging.info(text)
