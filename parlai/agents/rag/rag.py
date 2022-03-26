@@ -913,7 +913,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         """
         if batch.label_vec is None:
             raise ValueError('Cannot compute loss without a label.')
-
+        
         model_output = self.get_model_output(batch)
         scores, preds, enc_state, *_ = model_output
 

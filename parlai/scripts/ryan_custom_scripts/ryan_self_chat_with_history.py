@@ -105,12 +105,15 @@ def _run_self_chat_episode(opt, world, world_logger, add_chat):
     agent1 = world.agents[0]
     agent2 = world.agents[1]
 
+
+
     for i in range(num_parleys):
         
         if i == 1:
             #hardcoded bc world.parley() deletes history if placed outside of history
             add_history(agent1, add_chat, True)
             add_history(agent2, add_chat, False)
+            print_history(agent1)
         
         world.parley()
         world_logger.log(world)
@@ -123,7 +126,7 @@ def _run_self_chat_episode(opt, world, world_logger, add_chat):
         print('-- end of episode --')
 
 
-    print_history(agent1)
+    # print_history(agent1)
     world.reset()
     world_logger.reset_world()  # flush this episode
 
