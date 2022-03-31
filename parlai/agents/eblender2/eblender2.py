@@ -57,7 +57,7 @@ from parlai.utils.torch import (
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 
 
-class EblenderAgent(TransformerGeneratorAgent):
+class Eblender2Agent(TransformerGeneratorAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         super().__init__(opt, shared)
         empathy_path = '/home/rg4312/thesis/evaluators/finetuned_output_models/empathy/fully_trained_roberta'
@@ -95,7 +95,7 @@ class EblenderAgent(TransformerGeneratorAgent):
         mseloss = nn.MSELoss()
         empathy_loss = mseloss(empathy_predictions, target_empathy)
 
-        empathy_loss /= 1 # reduce magnitude of the loss.
+        empathy_loss /= 2 # reduce magnitude of the loss.
 
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)

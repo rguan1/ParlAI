@@ -57,11 +57,11 @@ from parlai.utils.torch import (
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 
 
-class EblenderAgent(TransformerGeneratorAgent):
+class Eblender3Agent(TransformerGeneratorAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         super().__init__(opt, shared)
         empathy_path = '/home/rg4312/thesis/evaluators/finetuned_output_models/empathy/fully_trained_roberta'
-        self.empathy_model = RobertaWrapper(empathy_path)
+        # self.empathy_model = RobertaWrapper(empathy_path)
 
     def compute_loss(self, batch, return_output=False):
         """
@@ -89,13 +89,13 @@ class EblenderAgent(TransformerGeneratorAgent):
         generations = [g[1:] for (g, s, _) in beam_pred_scores]
         pred_toks = torch.nn.utils.rnn.pad_sequence(generations, batch_first=True)
         text = [self._v2t(p) for p in pred_toks]
-        empathy_predictions = torch.FloatTensor(self.empathy_model.predict(text))
-        target_empathy = torch.ones(empathy_predictions.size()) * 5
+        # empathy_predictions = torch.FloatTensor(self.empathy_model.predict(text))
+        # target_empathy = torch.ones(empathy_predictions.size()) * 5
 
-        mseloss = nn.MSELoss()
-        empathy_loss = mseloss(empathy_predictions, target_empathy)
+        # mseloss = nn.MSELoss()
+        # empathy_loss = mseloss(empathy_predictions, target_empathy)
 
-        empathy_loss /= 1 # reduce magnitude of the loss.
+        # empathy_loss /= 3 # reduce magnitude of the loss.
 
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)
@@ -123,7 +123,7 @@ class EblenderAgent(TransformerGeneratorAgent):
         loss /= target_tokens.sum()  # average loss per token
 
         #ryan change
-        loss += empathy_loss
+        # loss += empathy_loss
 
         num_toks = len(target_tokens.tolist())
         
