@@ -59,7 +59,7 @@ from transformers import RobertaTokenizer, RobertaForSequenceClassification
 # import psutil
 
 
-class EblenderAgent(TransformerGeneratorAgent):
+class Eblender4tAgent(TransformerGeneratorAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         super().__init__(opt, shared)
         # empathy_path = '/home/rg4312/thesis/evaluators/finetuned_output_models/empathy/fully_trained_roberta'
@@ -129,6 +129,8 @@ class EblenderAgent(TransformerGeneratorAgent):
         
         loss = loss.sum()
         loss /= target_tokens.sum()  # average loss per token
+
+        loss /= 4 #reduce tok loss magnitude
 
         #ryan change
         loss += empathy_loss

@@ -925,5 +925,6 @@ class BlenderBot2WizIntGoldDocRetrieverFiDAgent(
     WizIntGoldDocRetrieverFiDAgent, BlenderBot2FidAgent
 ):
     def _set_query_vec(self, observation: Message) -> Message:
+        breakpoint()
         self.show_observation_to_echo_retriever(observation)
         super()._set_query_vec(observation)

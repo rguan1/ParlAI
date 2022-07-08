@@ -56,12 +56,17 @@ from parlai.utils.torch import (
 )
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 
+# import psutil
 
-class Eblender2Agent(TransformerGeneratorAgent):
+
+class Eblender8Agent(TransformerGeneratorAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         super().__init__(opt, shared)
-        empathy_path = '/home/rg4312/thesis/evaluators/finetuned_output_models/empathy/fully_trained_roberta'
-        self.empathy_model = RobertaWrapper(empathy_path)
+        # empathy_path = '/home/rg4312/thesis/evaluators/finetuned_output_models/empathy/fully_trained_roberta'
+        # self.empathy_model = RobertaWrapper(empathy_path)
+        # print(psutil.cpu_percent())
+        # print(psutil.virtual_memory())  # physical memory usage
+        # print('memory used:', psutil.virtual_memory()[2])
 
     def compute_loss(self, batch, return_output=False):
         """
@@ -89,13 +94,16 @@ class Eblender2Agent(TransformerGeneratorAgent):
         generations = [g[1:] for (g, s, _) in beam_pred_scores]
         pred_toks = torch.nn.utils.rnn.pad_sequence(generations, batch_first=True)
         text = [self._v2t(p) for p in pred_toks]
+
+        empathy_path = '/home/rg4312/thesis/evaluators/finetuned_output_models/empathy/fully_trained_roberta'
+        self.empathy_model = RobertaWrapper(empathy_path)
         empathy_predictions = torch.FloatTensor(self.empathy_model.predict(text))
         target_empathy = torch.ones(empathy_predictions.size()) * 5
 
         mseloss = nn.MSELoss()
         empathy_loss = mseloss(empathy_predictions, target_empathy)
 
-        empathy_loss /= 2 # reduce magnitude of the loss.
+        empathy_loss /= 8 # reduce magnitude of the loss.
 
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)

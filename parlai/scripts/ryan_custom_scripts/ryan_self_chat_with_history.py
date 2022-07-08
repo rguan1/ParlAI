@@ -114,7 +114,14 @@ def _run_self_chat_episode(opt, world, world_logger, add_chat):
             add_history(agent1, add_chat, True)
             add_history(agent2, add_chat, False)
             print_history(agent1)
-        
+
+            # print("\n\n")
+            # print_history(agent2)
+
+        # #deubg
+        # if i == 2:
+        #     print_history(agent1)
+        # #debug
         world.parley()
         world_logger.log(world)
 
